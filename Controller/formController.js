@@ -3,10 +3,10 @@ const { sendEmail } = require('../Services/emailService');
 
 // Controller method to handle form submission
 exports.submitForm = async (req, res) => {
-    const { name, email, message } = req.body;
+    const { name, email, message,number } = req.body;
 
     // Basic validation
-    if (!name || !email || !message) {
+    if (!name || !email || !message || !number) {
         return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -14,6 +14,7 @@ exports.submitForm = async (req, res) => {
         const newFormData = new FormData({
             name,
             email,
+            number,
             message,
         });
 
@@ -97,6 +98,52 @@ exports.submitForm = async (req, res) => {
         res.status(200).json({ message: "Form data saved successfully and email sent" });
     } catch (err) {
         console.error("Error saving data or sending email:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+
+// Controller method to get all form submissions
+exports.getFormData = async (req, res) => {
+    try {
+        // Retrieve all form data from the database
+        const formData = await FormData.find();
+
+        // If no data is found
+        if (!formData || formData.length === 0) {
+            return res.status(404).json({ message: "No form submissions found" });
+        }
+
+        // Return the form data in the response
+        res.status(200).json({formData });
+    } catch (err) {
+        console.error("Error fetching form data:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+
+// Controller method to delete a form submission
+exports.deleteFormData = async (req, res) => {
+    try {
+        const  id  = req.params.id; 
+        // Check if the form data exists in the database
+        if (!id) {
+            return res.status(404).json({ message: "Id not found" });
+        }
+
+        // Delete the form data from the database
+        const deleted = await FormData.findByIdAndDelete(id);
+        if (!deleted) {
+            return res.status(404).json({
+                message: "User Not Found !.",
+                success: false
+            })
+        }
+        // Return success response
+       return res.status(200).json({ message: "Form submission deleted successfully" });
+    } catch (err) {
+        console.error("Error deleting form data:", err);
         res.status(500).json({ message: "Internal server error" });
     }
 };
