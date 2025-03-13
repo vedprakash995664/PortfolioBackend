@@ -95,7 +95,7 @@ exports.submitForm = async (req, res) => {
         // Send the email
         await sendEmail(email, emailSubject, emailHTMLContent);
 
-        res.status(200).json({ message: "Form data saved successfully and email sent" });
+        res.status(200).json({ message: "Form data saved successfully and email sent" ,newFormData});
     } catch (err) {
         console.error("Error saving data or sending email:", err);
         res.status(500).json({ message: "Internal server error" });

@@ -6,6 +6,7 @@ require('dotenv').config();
 
 // Import routes
 const formRoutes = require('./Routes/formRoute');
+const authAdmin = require('./Routes/authAdmin');
 
 const app = express();
 const port = process.env.PORT;
@@ -24,6 +25,9 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 // Use form routes
 app.use('/api', formRoutes);
+app.use('/admin', authAdmin);
+
+
 
 // Start the server
 app.listen(port, () => {
